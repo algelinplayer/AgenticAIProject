@@ -23,7 +23,7 @@ def display_responses(*args):
     markdown_string += "</tr></table>"
     display(Markdown(markdown_string))
 
-def get_completion(system_prompt, user_prompt, model="gpt-4.1-nano", client = None):
+def get_completion(messages = None, model="gpt-4.1-nano", client = None):
     """
     Function to get a completion from the OpenAI API.
     Args:
@@ -36,10 +36,7 @@ def get_completion(system_prompt, user_prompt, model="gpt-4.1-nano", client = No
     try:
         response = client.chat.completions.create(
             model=model,
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_prompt},
-            ],
+            messages=messages,
             temperature=0.7,
         )
         return response.choices[0].message.content
