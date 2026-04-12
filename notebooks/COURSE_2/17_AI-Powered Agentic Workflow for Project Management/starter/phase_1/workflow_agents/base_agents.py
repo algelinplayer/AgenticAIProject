@@ -6,6 +6,9 @@ import csv
 import uuid
 from datetime import datetime
 
+# OpenAI base URL (Vocareum) used across Course 2 demos
+OPENAI_BASE_URL = "https://openai.vocareum.com/v1"
+
 # DirectPromptAgent class definition
 class DirectPromptAgent:
     def __init__(self, openai_api_key):
@@ -14,7 +17,7 @@ class DirectPromptAgent:
 
     def respond(self, prompt):
         # Generate a response using the OpenAI API
-        client = OpenAI(api_key=self.openai_api_key)
+        client = OpenAI(base_url=OPENAI_BASE_URL, api_key=self.openai_api_key)
         response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[
@@ -33,7 +36,7 @@ class AugmentedPromptAgent:
 
     def respond(self, input_text):
         """Generate a response using OpenAI API."""
-        client = OpenAI(api_key=self.openai_api_key)
+        client = OpenAI(base_url=OPENAI_BASE_URL, api_key=self.openai_api_key)
 
         response = client.chat.completions.create(
             model="gpt-3.5-turbo",
@@ -59,7 +62,7 @@ class KnowledgeAugmentedPromptAgent:
 
     def respond(self, input_text):
         """Generate a response using the OpenAI API."""
-        client = OpenAI(api_key=self.openai_api_key)
+        client = OpenAI(base_url=OPENAI_BASE_URL, api_key=self.openai_api_key)
         response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[
@@ -111,7 +114,7 @@ class RAGKnowledgePromptAgent:
         Returns:
         list: The embedding vector.
         """
-        client = OpenAI(base_url="https://openai.vocareum.com/v1", api_key=self.openai_api_key)
+        client = OpenAI(base_url=OPENAI_BASE_URL, api_key=self.openai_api_key)
         response = client.embeddings.create(
             model="text-embedding-3-large",
             input=text,
@@ -204,7 +207,7 @@ class RAGKnowledgePromptAgent:
 
         best_chunk = df.loc[df['similarity'].idxmax(), 'text']
 
-        client = OpenAI(base_url="https://openai.vocareum.com/v1", api_key=self.openai_api_key)
+        client = OpenAI(base_url=OPENAI_BASE_URL, api_key=self.openai_api_key)
         response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[
@@ -227,7 +230,7 @@ class EvaluationAgent:
 
     def evaluate(self, initial_prompt):
         # This method manages interactions between agents to achieve a solution.
-        client = OpenAI(api_key=self.openai_api_key)
+        client = OpenAI(base_url=OPENAI_BASE_URL, api_key=self.openai_api_key)
         prompt_to_evaluate = initial_prompt
         response_from_worker = ""
         evaluation = ""
@@ -299,7 +302,7 @@ class RoutingAgent:
         self.agents = agents
 
     def get_embedding(self, text):
-        client = OpenAI(api_key=self.openai_api_key)
+        client = OpenAI(base_url=OPENAI_BASE_URL, api_key=self.openai_api_key)
         response = client.embeddings.create(
             model="text-embedding-3-large",
             input=text
@@ -336,7 +339,7 @@ class ActionPlanningAgent:
         self.knowledge = knowledge
 
     def extract_steps_from_prompt(self, prompt):
-        client = OpenAI(api_key=self.openai_api_key)
+        client = OpenAI(base_url=OPENAI_BASE_URL, api_key=self.openai_api_key)
         response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[
