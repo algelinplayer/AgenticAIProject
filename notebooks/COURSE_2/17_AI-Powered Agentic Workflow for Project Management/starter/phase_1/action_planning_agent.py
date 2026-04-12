@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 
 # Load environment variables and define the openai_api_key variable with your OpenAI API key
 load_dotenv()
-openai_api_key = os.getenv("OPENAI_API_KEY")
+openai_api_key = os.getenv("OPENAI_API_KEY_DEV") or os.getenv("OPENAI_API_KEY")
 
 knowledge = """
 # Fried Egg

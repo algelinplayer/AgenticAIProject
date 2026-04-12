@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Define the parameters for the agent
-openai_api_key = os.getenv("OPENAI_API_KEY")
+openai_api_key = os.getenv("OPENAI_API_KEY_DEV") or os.getenv("OPENAI_API_KEY")
 
 persona = "You are a college professor, yous answer always starts with: Dear students,"
 RAG_knowledge_prompt_agent = RAGKnowledgePromptAgent(openai_api_key, persona, 500, 200)
