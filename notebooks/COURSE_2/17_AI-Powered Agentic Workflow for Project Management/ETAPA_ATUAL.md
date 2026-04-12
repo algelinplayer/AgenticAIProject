@@ -54,6 +54,14 @@ Foram mantidos/ajustados os scripts de teste individuais de cada agente, seguind
 
 **Motivação:** validar o comportamento de cada agente isoladamente antes de compor o workflow da Fase 2.
 
+### 3.3 Padronização do Model Provider Key (Vocareum)
+Para manter consistência com os **demos e exercícios do Curso 2**, os clientes OpenAI passaram a usar:
+
+- `base_url = "https://openai.vocareum.com/v1"` (padrão observado nos demos).  
+- `OPENAI_API_KEY_DEV` como variável principal de autenticação (com fallback para `OPENAI_API_KEY`).  
+
+**Motivação:** garantir compatibilidade com a infraestrutura do curso e evitar erros de autenticação ao executar os scripts de teste.
+
 ## 4) Demos e exemplos do curso usados como base
 Nesta etapa, os principais “demos” utilizados foram os próprios **scripts de teste e README da Phase 1** (notebooks/COURSE_2/17_AI-Powered Agentic Workflow for Project Management/starter/phase_1), que explicitam padrões de implementação e testes para cada agente. Esses exemplos orientam:
 
