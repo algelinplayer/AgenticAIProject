@@ -158,10 +158,15 @@ Para permitir continuidade sem travamentos silenciosos e com comportamento mais 
 
 4. **Ajuste no encadeamento das support functions**
    - Antes: cada support function chamava `knowledge_agent.respond(query)` e depois `evaluation_agent.evaluate(response)`.
-   - Agora (alinhado ao README/rubrica da Fase 2): mantém explicitamente `respond(query)` seguido de `evaluate(response)`.
-   - **Motivação didática:** aderência literal ao padrão solicitado no material oficial do projeto.
+   - Agora (ajuste incremental): cada support function chama `knowledge_agent.respond(query)` e repassa esse resultado para a avaliação com contexto do prompt original.
+   - **Motivação didática:** manter aderência ao fluxo solicitado no README da Fase 2 (`respond -> evaluate`) e, ao mesmo tempo, evitar dupla geração desnecessária.
 
-5. **Timeout explícito nos agentes da Fase 2**
+5. **Ajuste incremental no `EvaluationAgent` da Fase 2**
+   - Foi adicionada a opção de receber `initial_response` no método `evaluate(...)`.
+   - Quando `initial_response` é fornecida, a avaliação começa usando essa resposta já gerada; se a resposta for reprovada, o agente volta a iterar com feedback para refinamento.
+   - **Motivação didática:** compatibilizar o padrão do README com o contrato da classe sem custo extra de chamada duplicada.
+
+6. **Timeout explícito nos agentes da Fase 2**
    - Adicionado `timeout=60.0` nas chamadas `OpenAI(...)` da biblioteca `starter/phase_2/workflow_agents/base_agents.py`.
    - **Motivação didática:** reduzir risco de espera silenciosa em chamadas externas e melhorar previsibilidade durante validações.
 
@@ -202,6 +207,183 @@ Diagnóstico técnico consolidado por categoria:
 - Desenvolver/ajustar dentro da thread com validação leve.
 - Executar testes pesados e validação real de ponta a ponta em terminal externo controlado (`python -u ...`).
 
+### 6.6 Plano incremental de continuidade (sem travar a thread)
+Para continuar com estabilidade e manter o aprendizado por etapas:
+
+1. **Checkpoint de commit desta etapa**
+   - Consolidar as alterações atuais (workflow + documentação didática + guideline de commit).
+2. **Validação externa controlada da Fase 2**
+   - Rodar apenas em terminal externo:
+     - `cd "notebooks\\COURSE_2\\17_AI-Powered Agentic Workflow for Project Management\\starter\\phase_2"`
+     - `python -u .\\agentic_workflow.py`
+3. **Registro estruturado dos resultados**
+   - Registrar no relatório: steps do plano, rota por step, resposta validada por especialista, erros/timeouts.
+
+### 6.7 Template de registro de execução externa (copiar e preencher)
+```md
+## Execução controlada Fase 2 (terminal externo)
+
+- Data/Hora:
+- Ambiente:
+- Comando executado:
+  - python -u .\\starter\\phase_2\\agentic_workflow.py
+
+### Resultado do Action Planning
+- Quantidade de steps:
+- Steps gerados:
+
+### Resultado do Routing
+- Step 1 -> agente selecionado:
+- Step 2 -> agente selecionado:
+- Step 3 -> agente selecionado:
+
+### Resultado da Evaluation
+- Product Manager: (aprovado/reprovado) | observação:
+- Program Manager: (aprovado/reprovado) | observação:
+- Development Engineer: (aprovado/reprovado) | observação:
+
+### Incidentes
+- Timeout observado? (sim/não)
+- Erro de credencial? (sim/não)
+- Travamento? (sim/não)
+- Ação corretiva aplicada:
+```
+
+### 6.8 Registro consolidado das saídas da Fase 1 (rubrica)
+Para avançar de forma incremental e manter rastreabilidade para commits/submissão, consolidei as saídas já coletadas dos scripts da Fase 1 em um arquivo dedicado:
+
+- `PHASE_1_TEST_OUTPUTS.md`
+
+**O que este registro cobre:**
+- resultado de cada script individual da Fase 1;
+- interpretação didática de cada resultado;
+- observação explícita do incidente no RAG (`MemoryError`) que motivou os ajustes de estabilidade.
+
+**Motivação:**
+- atender o requisito da rubrica de organizar outputs em texto/screenshot;
+- facilitar revisão de aprendizado por etapa;
+- permitir commits menores e mais auditáveis.
+
+### 6.9 Próximo passo incremental (após sua confirmação)
+1. Consolidar commit desta etapa de documentação (relatório + log de outputs da Fase 1).
+2. Seguir para validação controlada externa da Fase 2 (sem execução pesada na thread).
+3. Registrar no relatório o resultado do workflow completo (steps, rota por step, avaliação final).
+
 - **Etapa seguinte:** Revisão final e submissão.
 
+### 6.10 Próxima etapa executada (checkpoint atual)
+Para avançar sem travamento e manter aderência à rubrica da Fase 2, implementei um checkpoint mínimo e estável:
+
+1. **Robustez de caminho no `agentic_workflow.py`**
+   - Ajuste aplicado: leitura do `Product-Spec-Email-Router.txt` agora usa caminho absoluto baseado no diretório do script (`Path(__file__).resolve().parent`).
+   - **Motivação didática:** evita falhas dependentes do diretório atual de execução (`cwd`) e torna a execução externa mais previsível.
+
+2. **Arquivo dedicado para evidência da Fase 2**
+   - Novo arquivo: `PHASE_2_WORKFLOW_OUTPUTS.md`.
+   - Conteúdo: comando de execução controlada em terminal externo + template de registro (Action Planning, Routing, Evaluation, output final e incidentes).
+   - **Motivação didática:** atender explicitamente a rubrica de documentação de saída do workflow, com rastreabilidade para commit incremental.
+
+3. **Relação com o Curso 2**
+   - **Lição 2 (Agentic Workflows):** reforço da orquestração multiagente com papéis especializados e avaliação iterativa.
+   - **Lição 9 (Routing):** preserva o fluxo onde cada step do plano é encaminhado por similaridade ao especialista mais adequado.
+
+4. **Observação operacional**
+   - Esta etapa **não executa runtime pesado** na thread interativa.
+   - A execução real permanece recomendada em terminal externo, com registro no `PHASE_2_WORKFLOW_OUTPUTS.md`.
+
+### 6.11 Revalidação de aderência à rubrica (checkpoint desta etapa)
+Objetivo desta etapa: responder com clareza **em que ponto estamos de aderência ao `project_rubric`**.
+
+| Bloco da rubrica | Evidência no projeto | Status |
+|---|---|---|
+| Fase 1 - classes obrigatórias em `workflow_agents/base_agents.py` | `starter/phase_1/workflow_agents/base_agents.py` contém: `DirectPromptAgent`, `AugmentedPromptAgent`, `KnowledgeAugmentedPromptAgent`, `EvaluationAgent`, `RoutingAgent`, `ActionPlanningAgent` (+ RAG fornecido) | ✅ |
+| Fase 1 - configuração de modelo/chaves | Uso de `gpt-3.5-turbo` nos agentes de chat, `text-embedding-3-large` em embeddings, chave via parâmetro (`openai_api_key`) | ✅ |
+| Fase 1 - scripts de teste por agente | Scripts presentes em `starter/phase_1/` para todos os agentes solicitados | ✅ |
+| Fase 1 - evidências de execução dos scripts | Registro consolidado em `PHASE_1_TEST_OUTPUTS.md` | ✅ |
+| Fase 2 - setup inicial (`agentic_workflow.py`) | Importações corretas, carga de `.env`, leitura de `Product-Spec-Email-Router.txt` por caminho robusto | ✅ |
+| Fase 2 - instanciação de agentes especializados e avaliadores | PM, Program Manager e Dev Engineer + respectivos `EvaluationAgent` | ✅ |
+| Fase 2 - Routing Agent com rotas e funções de suporte | Rotas com `name`, `description`, `func`; funções de suporte implementadas | ✅ |
+| Fase 2 - contrato das support functions da rubrica | Fluxo ajustado para `respond(query) -> evaluate(response) -> final_response` | ✅ |
+| Fase 2 - evidência de execução final do workflow | `PHASE_2_WORKFLOW_OUTPUTS.md` preenchido com execução real (baseline + execução controlada) | ✅ |
+
+**Leitura didática do status:**
+- **Aderência de implementação (código):** ✅ atingida no checkpoint atual.
+- **Aderência de submissão (evidências finais):** ✅ evidência final registrada no arquivo de outputs.
+
+### 6.12 Critério de “PROJETO ADERENTE À RUBRICA” (regra objetiva)
+Vou te avisar explicitamente como **"ADERENTE À RUBRICA"** quando os dois itens abaixo estiverem simultaneamente verdadeiros:
+
+1. Código da Fase 1 e Fase 2 mapeado em conformidade com os critérios estruturais/funcionais (já está).  
+2. Evidência final da Fase 2 preenchida no `PHASE_2_WORKFLOW_OUTPUTS.md` com saída real do workflow (concluído).
+
 > Observação: esta explicação será atualizada a cada nova etapa, com uma descrição didática do que foi implementado e como se conecta aos conceitos do curso.
+
+### 6.13 Próxima etapa executada (estabilidade operacional do workflow)
+Para reduzir risco de execução acidental e manter previsibilidade entre commits, foi aplicado um ajuste incremental no script principal da Fase 2:
+
+1. **`agentic_workflow.py` com `main guard`**
+   - Ajuste aplicado: o trecho de execução do workflow foi encapsulado em `run_workflow(...)` e protegido por:
+     - `if __name__ == "__main__":`
+   - **Motivação didática:** evita rodar chamadas de API automaticamente quando o arquivo é importado por outro script/módulo, reduzindo travamentos inesperados no ambiente interativo.
+
+2. **Relação com o Curso 2 (boas práticas de workflow agentic)**
+   - **Lição 2:** mantém o foco na orquestração entre agentes especializados (planejar → rotear → executar/especialista → avaliar).
+   - **Lição 9:** preserva o roteamento semântico como núcleo de decisão por step.
+   - O ajuste é **operacional** (estabilidade de execução), sem alterar a lógica pedagógica dos agentes.
+
+3. **Impacto esperado nesta etapa**
+   - Execução mais controlada para validação externa (`python -u .\\agentic_workflow.py`).
+   - Menor chance de “rodar sem querer” ao abrir/importar módulos durante manutenção.
+   - Continuidade incremental preservada para commit didático.
+
+### 6.14 Fechamento técnico da Fase 2 (execução real + evidências)
+Nesta etapa, o foco foi **fechar o projeto com evidência real de execução** e sem voltar ao padrão de travamentos longos.
+
+1. **Execução real do workflow (comando baseline)**
+   - Comando executado:
+     - `python -u .\\starter\\phase_2\\agentic_workflow.py`
+   - Resultado observado:
+     - workflow concluído sem crash;
+     - Action Planning gerou 1 step;
+     - roteamento selecionou `Development Engineer`;
+     - Evaluation aprovou após refinamento (2 interações).
+
+2. **Execução controlada para cobertura de stories/features/tasks**
+   - Comando executado (controlado):
+     - `python -u -c "import agentic_workflow as aw; aw.run_workflow('For the Email Router product spec, generate EXACTLY 3 workflow steps only: 1) create user stories, 2) define product features grouped from those stories, 3) define engineering tasks with dependencies. Return concise steps only.')"`
+   - Resultado observado:
+     - Action Planning gerou 3 steps;
+     - Routing + Evaluation funcionaram em todos os steps;
+     - saída final estruturada em tarefas de engenharia com dependências.
+
+3. **Incidente controlado e mitigação**
+   - Em um teste amplo anterior, o prompt gerou steps demais e estourou o tempo de execução.
+   - Mitigação aplicada: limitar o plano com `EXACTLY 3` steps para manter execução previsível e auditável.
+
+4. **Arquivo de evidência final atualizado**
+   - `PHASE_2_WORKFLOW_OUTPUTS.md` foi preenchido com:
+     - metadados do run,
+     - outputs de Action Planning, Routing e Evaluation,
+     - incidentes e mitigação,
+     - próximos ajustes opcionais.
+
+5. **Status de aderência à rubrica (neste checkpoint)**
+   - **Implementação (Fase 1 + Fase 2):** ✅
+   - **Evidências de execução (Fase 1 + Fase 2):** ✅
+   - **Projeto aderente à rubrica para submissão:** ✅
+
+### 6.15 Diagnóstico final de travamentos (ontem vs hoje)
+Resumo objetivo do que explica a diferença de comportamento:
+
+1. **Causa operacional principal**
+   - Workflows agentic com múltiplos passos + chamadas de API síncronas podem exceder tempo em sessões interativas, parecendo “travamento”.
+
+2. **Causa técnica já tratada**
+   - RAG da Fase 1 tinha risco de loop/memória no chunking (já estabilizado nas etapas anteriores).
+
+3. **Prática adotada para continuidade**
+   - usar execução controlada com prompt limitado;
+   - coletar evidência em arquivo dedicado;
+   - manter validação incremental em vez de rodadas longas e abertas.
+
+Com isso, o projeto segue o padrão didático do Curso 2 e está pronto para seu fechamento em commit/submissão.

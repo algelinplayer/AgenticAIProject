@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 
 # TODO: 2 - Load the OpenAI key into a variable called openai_api_key
 project_root = Path(__file__).resolve().parents[2]
+phase_2_dir = Path(__file__).resolve().parent
 load_dotenv(project_root / ".env")
 openai_api_key = os.getenv("OPENAI_API_KEY_DEV") or os.getenv("OPENAI_API_KEY")
 
@@ -16,7 +17,8 @@ if not openai_api_key:
 
 # load the product spec
 # TODO: 3 - Load the product spec document Product-Spec-Email-Router.txt into a variable called product_spec
-with open("Product-Spec-Email-Router.txt", "r") as file:
+product_spec_path = phase_2_dir / "Product-Spec-Email-Router.txt"
+with open(product_spec_path, "r", encoding="utf-8") as file:
     product_spec = file.read()
 
 # Instantiate all the agents
@@ -165,36 +167,35 @@ routes = [
 routing_agent = RoutingAgent(openai_api_key, routes)
 routing_agent.agents = routes
 
-# Run the workflow
 
-print("\n*** Workflow execution started ***\n")
-# Workflow Prompt
-# ****
-workflow_prompt = "What would the development tasks for this product be?"
-# ****
-print(f"Task to complete in this workflow, workflow prompt = {workflow_prompt}")
+def run_workflow(workflow_prompt="What would the development tasks for this product be?"):
+    print("\n*** Workflow execution started ***\n")
+    print(f"Task to complete in this workflow, workflow prompt = {workflow_prompt}")
 
-print("\nDefining workflow steps from the workflow prompt")
-# TODO: 12 - Implement the workflow.
-#   1. Use the 'action_planning_agent' to extract steps from the 'workflow_prompt'.
-#   2. Initialize an empty list to store 'completed_steps'.
-#   3. Loop through the extracted workflow steps:
-#      a. For each step, use the 'routing_agent' to route the step to the appropriate support function.
-#      b. Append the result to 'completed_steps'.
-#      c. Print information about the step being executed and its result.
-#   4. After the loop, print the final output of the workflow (the last completed step).
+    print("\nDefining workflow steps from the workflow prompt")
+    # TODO: 12 - Implement the workflow.
+    #   1. Use the 'action_planning_agent' to extract steps from the 'workflow_prompt'.
+    #   2. Initialize an empty list to store 'completed_steps'.
+    #   3. Loop through the extracted workflow steps:
+    #      a. For each step, use the 'routing_agent' to route the step to the appropriate support function.
+    #      b. Append the result to 'completed_steps'.
+    #      c. Print information about the step being executed and its result.
+    #   4. After the loop, print the final output of the workflow (the last completed step).
+    workflow_steps = action_planning_agent.extract_steps_from_prompt(workflow_prompt)
+    completed_steps = []
 
-workflow_steps = action_planning_agent.extract_steps_from_prompt(workflow_prompt)
-completed_steps = []
+    for i, step in enumerate(workflow_steps):
+        print(f"\n--- Processing Step {i + 1}: {step} ---")
+        result = routing_agent.route(step)
+        completed_steps.append(result)
+        print(f"Result for Step {i + 1}:\n{result}")
 
-for i, step in enumerate(workflow_steps):
-    print(f"\n--- Processing Step {i+1}: {step} ---")
-    result = routing_agent.route(step)
-    completed_steps.append(result)
-    print(f"Result for Step {i+1}:\n{result}")
+    print("\n*** Final Workflow Output ***")
+    if completed_steps:
+        print(completed_steps[-1])
+    else:
+        print("No steps completed.")
 
-print("\n*** Final Workflow Output ***")
-if completed_steps:
-    print(completed_steps[-1])
-else:
-    print("No steps completed.")
+
+if __name__ == "__main__":
+    run_workflow()
