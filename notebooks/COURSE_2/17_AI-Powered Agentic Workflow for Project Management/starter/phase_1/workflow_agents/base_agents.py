@@ -4,6 +4,7 @@ import pandas as pd
 import re
 import csv
 import uuid
+import ast
 from datetime import datetime
 
 # OpenAI base URL (Vocareum) used across Course 2 demos
@@ -88,7 +89,16 @@ class RAGKnowledgePromptAgent:
     and leverages embeddings to respond to prompts based solely on retrieved information.
     """
 
-    def __init__(self, openai_api_key, persona, chunk_size=2000, chunk_overlap=100):
+    def __init__(
+        self,
+        openai_api_key,
+        persona,
+        chunk_size=2000,
+        chunk_overlap=100,
+        persist_chunks=True,
+        max_chunks=1000,
+        min_chunk_advance=1
+    ):
         """
         Initializes the RAGKnowledgePromptAgent with API credentials and configuration settings.
 
@@ -102,7 +112,12 @@ class RAGKnowledgePromptAgent:
         self.chunk_size = chunk_size
         self.chunk_overlap = chunk_overlap
         self.openai_api_key = openai_api_key
+        self.persist_chunks = persist_chunks
+        self.max_chunks = max_chunks
+        self.min_chunk_advance = min_chunk_advance
         self.unique_filename = f"{datetime.now().strftime('%Y%m%d_%H%M%S')}_{uuid.uuid4().hex[:8]}.csv"
+        self.chunks = []
+        self.embeddings_df = None
 
     def get_embedding(self, text):
         """
@@ -114,7 +129,7 @@ class RAGKnowledgePromptAgent:
         Returns:
         list: The embedding vector.
         """
-        client = OpenAI(base_url=OPENAI_BASE_URL, api_key=self.openai_api_key)
+        client = OpenAI(base_url=OPENAI_BASE_URL, api_key=self.openai_api_key, timeout=60.0)
         response = client.embeddings.create(
             model="text-embedding-3-large",
             input=text,
@@ -147,17 +162,25 @@ class RAGKnowledgePromptAgent:
         list: List of dictionaries containing chunk metadata.
         """
         separator = "\n"
-        text = re.sub(r'\s+', ' ', text).strip()
+        # Normalize multiple spaces but preserve newlines
+        text = re.sub(r'[ \t]+', ' ', text).strip()
 
         if len(text) <= self.chunk_size:
-            return [{"chunk_id": 0, "text": text, "chunk_size": len(text)}]
+            self.chunks = [{"chunk_id": 0, "text": text, "chunk_size": len(text)}]
+            return self.chunks
 
         chunks, start, chunk_id = [], 0, 0
+        text_length = len(text)
 
-        while start < len(text):
-            end = min(start + self.chunk_size, len(text))
+        while start < text_length:
+            end = min(start + self.chunk_size, text_length)
             if separator in text[start:end]:
-                end = start + text[start:end].rindex(separator) + len(separator)
+                adjusted_end = start + text[start:end].rindex(separator) + len(separator)
+                if adjusted_end > start:
+                    end = adjusted_end
+
+            if end <= start:
+                end = min(start + self.min_chunk_advance, text_length)
 
             chunks.append({
                 "chunk_id": chunk_id,
@@ -167,17 +190,27 @@ class RAGKnowledgePromptAgent:
                 "end_char": end
             })
 
-            if end == len(text):
+            if end >= text_length:
                 break
 
-            start = end - self.chunk_overlap
+            new_start = end - self.chunk_overlap
+            if new_start <= start:
+                new_start = end
+
+            start = new_start
             chunk_id += 1
 
-        with open(f"chunks-{self.unique_filename}", 'w', newline='', encoding='utf-8') as csvfile:
-            writer = csv.DictWriter(csvfile, fieldnames=["text", "chunk_size"])
-            writer.writeheader()
-            for chunk in chunks:
-                writer.writerow({k: chunk[k] for k in ["text", "chunk_size"]})
+            if chunk_id >= self.max_chunks:
+                break
+
+        self.chunks = chunks
+
+        if self.persist_chunks:
+            with open(f"chunks-{self.unique_filename}", 'w', newline='', encoding='utf-8') as csvfile:
+                writer = csv.DictWriter(csvfile, fieldnames=["text", "chunk_size"])
+                writer.writeheader()
+                for chunk in chunks:
+                    writer.writerow({k: chunk[k] for k in ["text", "chunk_size"]})
 
         return chunks
 
@@ -188,12 +221,25 @@ class RAGKnowledgePromptAgent:
         Returns:
         DataFrame: DataFrame containing text chunks and their embeddings.
         """
-        df = pd.read_csv(f"chunks-{self.unique_filename}", encoding='utf-8')
-        df['embeddings'] = df['text'].apply(self.get_embedding)
-        df.to_csv(f"embeddings-{self.unique_filename}", encoding='utf-8', index=False)
+        if self.chunks:
+            df = pd.DataFrame(self.chunks)
+        else:
+            df = pd.read_csv(f"chunks-{self.unique_filename}", encoding='utf-8')
+
+        embeddings = []
+        for text in df['text'].tolist():
+            embeddings.append(self.get_embedding(text))
+
+        df = df.copy()
+        df['embeddings'] = embeddings
+        self.embeddings_df = df
+
+        if self.persist_chunks:
+            df.to_csv(f"embeddings-{self.unique_filename}", encoding='utf-8', index=False)
+
         return df
 
-    def find_prompt_in_knowledge(self, prompt):
+    def find_prompt_in_knowledge(self, prompt, use_chat=True):
         """
         Finds and responds to a prompt based on similarity with embedded knowledge.
 
@@ -204,13 +250,26 @@ class RAGKnowledgePromptAgent:
         str: Response derived from the most similar chunk in knowledge.
         """
         prompt_embedding = self.get_embedding(prompt)
-        df = pd.read_csv(f"embeddings-{self.unique_filename}", encoding='utf-8')
-        df['embeddings'] = df['embeddings'].apply(lambda x: np.array(eval(x)))
+
+        if self.embeddings_df is not None:
+            df = self.embeddings_df.copy()
+        else:
+            df = pd.read_csv(f"embeddings-{self.unique_filename}", encoding='utf-8')
+
+        if 'embeddings' not in df.columns:
+            raise ValueError("Embeddings not found. Run calculate_embeddings() first.")
+
+        if isinstance(df['embeddings'].iloc[0], str):
+            df['embeddings'] = df['embeddings'].apply(lambda x: np.array(ast.literal_eval(x)))
+
         df['similarity'] = df['embeddings'].apply(lambda emb: self.calculate_similarity(prompt_embedding, emb))
 
         best_chunk = df.loc[df['similarity'].idxmax(), 'text']
 
-        client = OpenAI(base_url=OPENAI_BASE_URL, api_key=self.openai_api_key)
+        if not use_chat:
+            return best_chunk
+
+        client = OpenAI(base_url=OPENAI_BASE_URL, api_key=self.openai_api_key, timeout=60.0)
         response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[
