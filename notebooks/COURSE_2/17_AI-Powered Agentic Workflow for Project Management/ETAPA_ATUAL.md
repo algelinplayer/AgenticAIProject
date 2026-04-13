@@ -158,8 +158,12 @@ Para permitir continuidade sem travamentos silenciosos e com comportamento mais 
 
 4. **Ajuste no encadeamento das support functions**
    - Antes: cada support function chamava `knowledge_agent.respond(query)` e depois `evaluation_agent.evaluate(response)`.
-   - Agora: chama diretamente `evaluation_agent.evaluate(query)`, deixando o loop interno do evaluator controlar o worker.
-   - **Motivação didática:** evita duplicidade de chamadas ao worker e segue melhor o padrão Worker↔Evaluator do curso.
+   - Agora (alinhado ao README/rubrica da Fase 2): mantém explicitamente `respond(query)` seguido de `evaluate(response)`.
+   - **Motivação didática:** aderência literal ao padrão solicitado no material oficial do projeto.
+
+5. **Timeout explícito nos agentes da Fase 2**
+   - Adicionado `timeout=60.0` nas chamadas `OpenAI(...)` da biblioteca `starter/phase_2/workflow_agents/base_agents.py`.
+   - **Motivação didática:** reduzir risco de espera silenciosa em chamadas externas e melhorar previsibilidade durante validações.
 
 ### 6.2 Relação com o Curso 2 (base conceitual)
 - **Lição 2 (AI Agents and Agentic Workflows / Email Router Project):** padrão de composição entre agentes especializados, com planejamento e validação iterativa.
@@ -169,6 +173,34 @@ Para permitir continuidade sem travamentos silenciosos e com comportamento mais 
 1. Registrar as saídas dos testes leves já concluídos da Fase 1 no relatório.
 2. Executar apenas validação **controlada** da Fase 2 em terminal externo (fora da thread da Junie), para evitar travamento do ambiente.
 3. Consolidar checklist final para commit incremental desta etapa.
+
+### 6.4 Revalidação do kickoff (checkpoint solicitado)
+Reanalisei os documentos de kickoff e confirmei que a direção do projeto continua correta:
+
+- `project_overview.md` / `project_overview.txt`: projeto em duas fases (biblioteca de agentes + workflow orquestrado para Product Management).
+- `README.md` (raiz da etapa): aponta para execução em duas fases e uso dos guias dentro de `starter/`.
+- `starter/phase_1/README.md`: implementação e validação de 7 agentes (incluindo RAG fornecido) com scripts individuais.
+- `starter/phase_2/README.md`: construção do `agentic_workflow.py` com `ActionPlanningAgent`, `RoutingAgent`, `KnowledgeAugmentedPromptAgent` e `EvaluationAgent`.
+- Rubricas (`project_rubric*.txt`): exigem aderência estrutural, outputs por script e saída final do workflow.
+
+### 6.5 Diagnóstico: por que ontem travou e hoje está fluindo
+Diagnóstico técnico consolidado por categoria:
+
+1. **Ambiente/execução (principal fator)**
+   - Ontem houve execuções longas e síncronas dentro da thread interativa (Junie + terminal acoplado), o que é sensível a latência de rede/API e I/O.
+   - Hoje o fluxo foi mais estável porque priorizamos inspeção/correções e validação leve (lint), evitando execuções pesadas contínuas na thread.
+
+2. **Código/lógica (fator contribuinte identificado anteriormente)**
+   - No RAG, havia risco de loop/alto consumo em `chunk_text` (já corrigido com salvaguardas de avanço e limites).
+   - Isso elevava chance de bloqueio do ambiente quando combinado com chamadas de API e I/O.
+
+3. **Chamadas externas/API (fator crítico de congelamento percebido)**
+   - Chamadas OpenAI sem timeout explícito podem parecer “travamento” quando a resposta demora.
+   - Mitigação aplicada: `timeout=60.0` na Fase 2 (e já havia proteção no RAG relevante).
+
+**Recomendação operacional permanente:**
+- Desenvolver/ajustar dentro da thread com validação leve.
+- Executar testes pesados e validação real de ponta a ponta em terminal externo controlado (`python -u ...`).
 
 - **Etapa seguinte:** Revisão final e submissão.
 

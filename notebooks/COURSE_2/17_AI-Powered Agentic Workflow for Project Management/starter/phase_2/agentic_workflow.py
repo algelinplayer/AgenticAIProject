@@ -128,17 +128,20 @@ development_engineer_evaluation_agent = EvaluationAgent(
 
 def product_manager_support_function(query):
     print(f"Executing Product Manager support function for query: {query}")
-    evaluation = product_manager_evaluation_agent.evaluate(query)
+    response = product_manager_knowledge_agent.respond(query)
+    evaluation = product_manager_evaluation_agent.evaluate(response)
     return evaluation['final_response']
 
 def program_manager_support_function(query):
     print(f"Executing Program Manager support function for query: {query}")
-    evaluation = program_manager_evaluation_agent.evaluate(query)
+    response = program_manager_knowledge_agent.respond(query)
+    evaluation = program_manager_evaluation_agent.evaluate(response)
     return evaluation['final_response']
 
 def development_engineer_support_function(query):
     print(f"Executing Development Engineer support function for query: {query}")
-    evaluation = development_engineer_evaluation_agent.evaluate(query)
+    response = development_engineer_knowledge_agent.respond(query)
+    evaluation = development_engineer_evaluation_agent.evaluate(response)
     return evaluation['final_response']
 
 routes = [
