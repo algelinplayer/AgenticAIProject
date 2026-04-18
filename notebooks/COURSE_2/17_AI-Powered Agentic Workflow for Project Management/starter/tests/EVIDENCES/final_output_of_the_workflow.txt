@@ -1,225 +1,135 @@
 
-
 ==================================================
 FINAL PROJECT PLAN: EMAIL ROUTER
 ==================================================
 
-As a Customer Support Representative, I want the Email Router system to automate responses to routine inquiries so that I can focus on addressing complex customer issues efficiently.
+### 1. USER STORIES
+- As a Customer Support Representative, I want the Email Router to automatically classify incoming emails so that I can focus on handling complex issues.
+- As an SME, I want the Email Router to route only relevant, complex inquiries to me so that I can improve efficiency and job satisfaction.
+- As an IT Administrator, I want the Email Router to provide a dashboard displaying performance metrics so that I can monitor system performance effectively.
+- As a user, I want the Email Router to preprocess emails to extract metadata such as sender, recipient, subject, and timestamp so that I can have relevant information readily available.
+- As a user, I want the Email Router to generate draft responses for routine inquiries using the RAG system so that I can respond quickly to common questions.
+- As a user, I want the Email Router to forward complex or high-confidence emails to the appropriate SME based on predefined rules so that I can ensure inquiries reach the right experts.
+- As a user, I want the Email Router to handle a minimum of 10,000 emails per hour without degradation in performance so that I can rely on its scalability.
+- As a user, I want the Email Router to comply with GDPR, CCPA, and other relevant data protection regulations so that I can ensure data privacy and compliance.
+- As a user, I want the Email Router to encrypt all emails, including stored and transmitted data, using AES-256 encryption so that I can secure sensitive information.
+- As a user, I want the Email Router to implement Role-Based Access Control (RBAC) to restrict system access based on user roles so that I can control who can access the system.
+As a user, I want to set up email forwarding rules so that emails are routed to the appropriate recipients efficiently.
+As a user, I want to receive real-time notifications for emails classified as high-priority by the Email Router system so that I can promptly address critical communications.
+As a user, I want to block specific email addresses so that I can prevent unwanted communication and maintain a secure inbox.
+"As a Customer Support Representative, I want the Email Router to include a spam filter so that the number of irrelevant messages is reduced and efficiency is improved."
 
-As an IT Administrator, I need the Email Router system to seamlessly integrate with our existing email services via SMTP, IMAP, and RESTful APIs to ensure smooth operation and minimal disruption to our current workflows.
+### 2. PRODUCT FEATURES
+Feature Name: Automated Ingestion
+Description: Automatically fetches emails from designated mailboxes.
+Key Functionality: Monitors specified email accounts for new messages and pulls them into the system.
+User Benefit: Saves time and effort by eliminating the need for manual email retrieval.
 
-As a Subject Matter Expert (SME), I expect the Email Router system to accurately route complex inquiries to me based on content analysis and defined business rules, allowing me to provide specialized assistance effectively.
+Feature Name: NLP Classification
+Description: Utilizes Natural Language Processing to categorize incoming emails.
+Key Functionality: Analyzes email content to determine the topic or category of the message.
+User Benefit: Improves efficiency by automatically sorting emails for quicker response and resolution.
 
-As a Team Leader, I require the Email Router system to provide a management dashboard for monitoring system performance, workflow bottlenecks, and response metrics so that I can track the efficiency and effectiveness of our email management processes.
+Feature Name: RAG-based SME Routing
+Description: Routes emails to Subject Matter Experts (SMEs) based on RAG (Red, Amber, Green) prioritization.
+Key Functionality: Assigns emails to appropriate SMEs according to urgency levels indicated by RAG status.
+User Benefit: Ensures timely handling of critical emails by directing them to the right experts for prompt resolution.
 
-As a Compliance Officer, I seek assurance that the Email Router system complies with data protection regulations such as GDPR, CCPA, and other relevant standards to safeguard sensitive information and ensure legal compliance.
+Feature Name: Analytics Dashboard
+Description: Provides visual insights and metrics on email routing performance.
+Key Functionality: Displays key performance indicators such as response times, routing accuracy, and workload distribution.
+User Benefit: Enables users to track and optimize email routing processes for enhanced efficiency and customer satisfaction.
+Feature Name: Automated Ingestion
+Description: Automatically fetches incoming emails from designated mailboxes.
+Key Functionality: Monitors specified email accounts, retrieves new emails, and prepares them for processing.
+User Benefit: Saves time and ensures timely handling of incoming emails.
 
-Based on the user story provided, a potential feature for the product could be "Email Management System" which includes the ability to set up email forwarding rules.
+Feature Name: NLP Classification
+Description: Utilizes Natural Language Processing to categorize incoming emails based on content.
+Key Functionality: Analyzes email content to determine the category or nature of the email.
+User Benefit: Enables efficient sorting and prioritization of emails for quicker responses.
 
-As a Customer Support Representative, I want to receive real-time notifications for high-priority emails that require immediate attention, so I can promptly address critical customer inquiries and ensure timely responses.
+Feature Name: RAG-based SME Routing
+Description: Routes emails to Subject Matter Experts (SMEs) based on Red, Amber, Green (RAG) prioritization.
+Key Functionality: Assigns emails to appropriate SMEs according to urgency levels indicated by RAG status.
+User Benefit: Ensures that critical emails are addressed promptly by directing them to the right experts.
 
-Feature: Email Blocking
+Feature Name: Analytics Dashboard
+Description: Provides a visual representation of email routing performance and trends.
+Key Functionality: Displays key metrics such as email volume, response times, and routing efficiency.
+User Benefit: Enables users to track and optimize email handling processes for improved productivity.
 
-Description: This feature allows users to block specific email addresses from contacting them. Users can easily manage their blocked list to control who can communicate with them via email.
+### 3. ENGINEERING TASKS
+Task ID: 001
+Task Title: Email forwarding rules management
+Related User Story: US-101
+Description: Develop a feature to allow users to create, edit, and delete email forwarding rules within the email system.
+Acceptance Criteria: Users can add new forwarding rules, edit existing rules, and delete rules as needed. Changes should be reflected in real-time.
+Estimated Effort: 5 days
+Dependencies: Access to the email system's backend for rule management
+Task ID: 001
+Task Title: Implement notification system for important emails
+Related User Story: US-101
+Description: Develop a notification system that identifies and alerts users of important emails based on predefined criteria.
+Acceptance Criteria: Notifications are triggered for emails marked as important by the system. Users can customize notification settings. Notifications are delivered through email, SMS, or in-app alerts.
+Estimated Effort: 5 days
+Dependencies: Integration with email server for real-time email monitoring.
+Task ID: 001
+Task Title: Integrate spam filter service
+Related User Story: US-101
+Description: Integrate third-party spam filter service into the email system for automated spam detection and filtering.
+Acceptance Criteria: Successful integration of spam filter service, effective spam email filtering without blocking legitimate emails.
+Estimated Effort: 5 days
+Dependencies: Access to third-party spam filter service API.
+Task ID: 1
+Task Title: Implement database schema changes
+Related User Story: 
+Description: Database backup should be taken before making any changes.
+Acceptance Criteria: Changes to the database schema are successfully implemented.
+Estimated Effort: High
+Dependencies: 
 
-Feature Name: Email Management
-Description: This feature allows users to efficiently manage their emails.
-Key Functionality: Organize emails into folders, set reminders for important emails, and prioritize emails based on importance.
-User Benefit: Users can stay organized, never miss important emails, and focus on high-priority tasks.
+Task ID: 2
+Task Title: Develop REST API endpoints
+Related User Story: 
+Description: Database schema changes from Task 1 should be completed.
+Acceptance Criteria: REST API endpoints are fully functional and tested.
+Estimated Effort: High
+Dependencies: Database schema changes from Task 1
 
-Feature Name: Inbox Organization
-Description: This feature helps users keep their inbox tidy and clutter-free.
-Key Functionality: Archive old emails, automatically categorize incoming emails, and customize inbox layout.
-User Benefit: Users can easily find relevant emails, reduce inbox clutter, and improve productivity.
+Task ID: 3
+Task Title: Implement front-end UI changes
+Related User Story: 
+Description: REST API endpoints from Task 2 should be available for integration.
+Acceptance Criteria: Front-end UI changes are implemented and integrated with the REST API.
+Estimated Effort: High
+Dependencies: REST API endpoints from Task 2
+Task ID: 001
+Task Title: Develop user interface for setting up email forwarding rules
+Related User Story: US-101
+Description: Design and implement a user interface that allows users to set up email forwarding rules, including specifying forwarding addresses, conditions, and actions.
+Acceptance Criteria: The user interface should allow users to easily add, edit, and delete forwarding rules. It should provide clear guidance on setting up rules and should be intuitive to use.
+Estimated Effort: 5 days
+Dependencies: UI design finalized, backend API for managing email forwarding rules implemented.
+Task ID: 001
+Task Title: Implement notification system for important emails
+Related User Story: US-101
+Description: Develop a notification system that identifies and alerts users of important emails based on predefined criteria.
+Acceptance Criteria: Notifications are triggered for emails marked as important by the system. Users can customize notification settings. Notifications are delivered through email, SMS, or in-app alerts.
+Estimated Effort: 5 days
+Dependencies: Integration with email server for real-time email monitoring.
+Task ID: 001
+Task Title: Create functionality to block specific email addresses
+Related User Story: US-101
+Description: Develop a feature that allows users to input specific email addresses they want to block from receiving emails.
+Acceptance Criteria: Users can add email addresses to a block list, emails from these addresses are automatically filtered out.
+Estimated Effort: 5 hours
+Dependencies: User interface for managing blocked email addresses must be in place.
+Task ID: 001
+Task Title: Integrate spam filter into the email routing system
+Related User Story: US-101
+Description: Implement the necessary code changes to integrate a spam filter module into the existing email routing system.
+Acceptance Criteria: The spam filter should successfully detect and divert spam emails from the regular email flow.
+Estimated Effort: 5 days
+Dependencies: Availability of spam filter module and access to email routing system codebase.
 
-Feature Name: Secure Payment Processing
-Description: This feature ensures that all payment transactions on the platform are securely processed using encryption technology.
-Key Functionality: Encryption of payment data, secure payment gateway integration.
-User Benefit: Users can make purchases with confidence knowing that their payment information is protected.
-
-Grouping similar user stories related to email forwarding rules management can help define the features for this product. Some potential features could include:
-
-1. Rule creation: Allow users to create custom email forwarding rules based on specific criteria such as sender, subject, or keywords.
-2. Rule prioritization: Enable users to prioritize their email forwarding rules to ensure certain emails are forwarded before others.
-3. Rule editing: Provide users with the ability to edit existing email forwarding rules to make adjustments as needed.
-4. Rule activation/deactivation: Allow users to easily activate or deactivate email forwarding rules without having to delete them.
-5. Rule monitoring: Provide users with visibility into which email forwarding rules are currently active and how they are impacting their email management.
-6. Rule organization: Enable users to organize their email forwarding rules into folders or categories for better management and navigation.
-7. Rule sharing: Allow users to share their email forwarding rules with others, such as team members or colleagues, for collaboration purposes.
-
-Grouping similar user stories related to a notification system for important emails could include:
-
-1. User story: As a user, I want to receive notifications for emails marked as important by specific senders.
-2. User story: As a user, I want to customize the frequency of notifications for important emails.
-3. User story: As a user, I want to be able to set different notification preferences for important emails based on the sender or subject.
-4. User story: As a user, I want to receive notifications for important emails even when the email app is closed.
-5. User story: As a user, I want to be able to snooze notifications for important emails for a specific period of time.
-
-Feature: Email Address Blocking
-Description: This feature allows users to control the emails they receive by blocking specific email addresses or entire domains.
-Key Functionality: 
-1. Block specific email addresses to prevent unwanted emails.
-2. Manage a list of blocked email addresses easily.
-3. Receive notifications for emails from blocked addresses.
-4. Temporarily unblock email addresses if needed.
-5. Block entire domains to prevent emails from multiple addresses within that domain.
-User Benefit: Users can effectively manage their incoming emails, reduce unwanted communication, and enhance their email security and privacy.
-
-Grouping similar user stories related to spam filter integration can help define the features for this product. Some potential features could include:
-
-1. Real-time spam detection: Implementing a feature that can detect and filter out spam messages in real-time.
-2. Customizable spam rules: Allowing users to set their own rules for what constitutes spam and how it should be handled.
-3. Spam notification system: Notifying users when a potential spam message is detected and giving them options to take action.
-4. Spam reporting: Allowing users to report spam messages to improve the spam filter's accuracy over time.
-5. Integration with popular email platforms: Ensuring seamless integration with popular email services to provide spam filtering across different platforms.
-
-1. Task ID: ENG001
-2. Task Title: Develop front-end interface for user login
-3. Related User Story: As a user, I want to be able to log in to the system securely
-4. Description: Create a user-friendly front-end interface for user login with input fields for username and password, along with a submit button
-5. Acceptance Criteria: Users should be able to enter their credentials, click the submit button, and be authenticated successfully
-6. Estimated Effort: 8 hours
-7. Dependencies: Completion of backend authentication API
-
-Grouping similar user stories related to setting up email forwarding rules can help define the features for the product. Some possible features could include:
-
-1. User-friendly interface for creating and managing email forwarding rules
-2. Ability to set up multiple forwarding rules for different email addresses
-3. Option to specify conditions for when emails should be forwarded
-4. Notification system to alert users of any issues with forwarding rules
-5. Integration with email providers to ensure seamless forwarding process
-6. Logging and reporting functionality to track forwarded emails
-7. Customization options for forwarded email settings, such as adding a prefix or tag
-
-By organizing user stories related to email forwarding rules into cohesive groups, these features can be further refined and prioritized to meet the needs of the users effectively.
-
-1. Task ID: DEV-001
-   Task Title: Define requirements for the notification system
-   Related User Story: As a user, I want to receive notifications for important emails so that I can promptly respond to them.
-   Description: Identify the types of important emails that should trigger a notification and define the criteria for flagging them.
-   Acceptance Criteria: The requirements should cover various scenarios for important emails and be clearly documented.
-   Estimated Effort: 2 days
-   Dependencies: None
-
-2. Task ID: DEV-002
-   Task Title: Design user interface for managing notification settings
-   Related User Story: As a user, I want to be able to customize my notification preferences for important emails.
-   Description: Create a user-friendly interface that allows users to configure their notification settings.
-   Acceptance Criteria: The interface should be intuitive, responsive, and provide options to enable/disable different types of notifications.
-   Estimated Effort: 3 days
-   Dependencies: DEV-001
-
-3. Task ID: DEV-003
-   Task Title: Develop backend logic for identifying important emails
-   Related User Story: As a user, I want the system to automatically flag important emails based on specified criteria.
-   Description: Implement the logic to analyze incoming emails and flag them as important if they meet the defined criteria.
-   Acceptance Criteria: The system should accurately identify important emails according to the specified criteria.
-   Estimated Effort: 5 days
-   Dependencies: DEV-001
-
-4. Task ID: DEV-004
-   Task Title: Implement notification mechanism for alerting users
-   Related User Story: As a user, I want to receive real-time notifications when important emails are received.
-   Description: Develop the functionality to send notifications to users when important emails are detected.
-   Acceptance Criteria: Users should receive timely notifications for important emails on their preferred devices.
-   Estimated Effort: 4 days
-   Dependencies: DEV-003
-
-5. Task ID: DEV-005
-   Task Title: Test notification system functionality
-   Related User Story: As a user, I want to ensure that the notification system works reliably.
-   Description: Conduct thorough testing to verify that the notification system functions correctly under various conditions.
-   Acceptance Criteria: The system should deliver notifications accurately and promptly without errors.
-   Estimated Effort: 3 days
-   Dependencies: DEV-004
-
-6. Task ID: DEV-006
-   Task Title: Integrate notification system with email platform
-   Related User Story: As a user, I want the notification system to seamlessly work with my existing email platform.
-   Description: Integrate the notification system with the email platform to enable seamless operation and communication between the two systems.
-   Acceptance Criteria: The notification system should be able to interact with the email platform without any disruptions to email services.
-   Estimated Effort: 4 days
-   Dependencies: DEV-004
-
-7. Task ID: DEV-007
-   Task Title: Document implementation details and user instructions
-   Related User Story: As a user, I want clear instructions on how to configure and use the notification system.
-   Description: Create detailed documentation outlining the implementation details of the notification system and provide user instructions for configuring and using it.
-   Acceptance Criteria: The documentation should be comprehensive, easy to understand, and cover all aspects of the notification system.
-   Estimated Effort: 2 days
-   Dependencies: None
-
-1. Task Identification: DEV-001
-2. Title: Develop functionality to block specific email addresses
-3. Related User Story: As a user, I want to block specific email addresses to prevent unwanted communication.
-4. Description: Implement backend and frontend features to allow users to add, remove, and check blocked email addresses.
-5. Acceptance Criteria:
-   - Users can add email addresses to a blocked list.
-   - Users can remove email addresses from the blocked list.
-   - Users can check if a specific email address is blocked.
-6. Estimated Effort: 16 hours
-7. Dependencies: Completion of backend data structure design for storing blocked email addresses.
-
-1. Task ID: 001
-2. Task Title: Research Existing Spam Filter Solutions
-3. Related User Story: Integrate spam filter solution into email routing system
-4. Description: Identify and evaluate available spam filter solutions to determine compatibility and effectiveness.
-5. Acceptance Criteria: List of at least three potential spam filter solutions with compatibility and effectiveness analysis.
-6. Estimated Effort: 2 days
-7. Dependencies: Access to information on current email routing system architecture.
-
-2. Task ID: 002
-2. Task Title: Evaluate Selected Spam Filter Solutions
-3. Related User Story: Integrate spam filter solution into email routing system
-4. Description: Test selected spam filter solutions in a controlled environment to assess compatibility and effectiveness.
-5. Acceptance Criteria: Report on the compatibility and effectiveness of each tested spam filter solution.
-6. Estimated Effort: 3 days
-7. Dependencies: Access to a test environment that mirrors the production email routing system.
-
-3. Task ID: 003
-2. Task Title: Select Suitable Spam Filter Solution
-3. Related User Story: Integrate spam filter solution into email routing system
-4. Description: Based on research and evaluation, choose the spam filter solution that best fits the email routing system requirements.
-5. Acceptance Criteria: Decision matrix outlining the reasons for selecting the chosen spam filter solution.
-6. Estimated Effort: 1 day
-7. Dependencies: Research and evaluation tasks completed.
-
-4. Task ID: 004
-2. Task Title: Develop Integration Plan
-3. Related User Story: Integrate spam filter solution into email routing system
-4. Description: Create a detailed roadmap outlining the steps and timeline for integrating the selected spam filter solution into the email routing system.
-5. Acceptance Criteria: Integration plan approved by the project stakeholders.
-6. Estimated Effort: 2 days
-7. Dependencies: Selection of the spam filter solution.
-
-5. Task ID: 005
-2. Task Title: Implement Spam Filter Solution Integration
-3. Related User Story: Integrate spam filter solution into email routing system
-4. Description: Execute the integration plan to incorporate the selected spam filter solution into the email routing system.
-5. Acceptance Criteria: Successful integration of the spam filter solution without disrupting email routing functionality.
-6. Estimated Effort: 5 days
-7. Dependencies: Approved integration plan in place.
-
-6. Task ID: 006
-2. Task Title: Test Spam Filter Solution Integration
-3. Related User Story: Integrate spam filter solution into email routing system
-4. Description: Conduct thorough testing to ensure the spam filter is functioning correctly within the email routing system.
-5. Acceptance Criteria: Test results confirming the proper operation of the spam filter solution.
-6. Estimated Effort: 3 days
-7. Dependencies: Integration of the spam filter solution completed.
-
-7. Task ID: 007
-2. Task Title: Refine and Optimize Integration
-3. Related User Story: Integrate spam filter solution into email routing system
-4. Description: Address any issues or performance gaps identified during testing to enhance the integration of the spam filter solution.
-5. Acceptance Criteria: Improved performance and functionality of the spam filter solution within the email routing system.
-6. Estimated Effort: 2 days
-7. Dependencies: Testing of the spam filter solution completed.
-
-8. Task ID: 008
-2. Task Title: Document Integration Process
-3. Related User Story: Integrate spam filter solution into email routing system
-4. Description: Create detailed documentation outlining the steps taken to integrate the spam filter solution into the email routing system for future reference and maintenance.
-5. Acceptance Criteria: Comprehensive documentation covering the integration process and configuration settings.
-6. Estimated Effort: 1 day
-7. Dependencies: Refinement and optimization of the integration completed.

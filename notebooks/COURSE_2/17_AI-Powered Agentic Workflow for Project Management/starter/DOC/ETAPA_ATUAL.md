@@ -418,9 +418,24 @@ Nesta fase, integramos todos os agentes para realizar o planejamento completo de
 - **Persistência de Evidências:** O workflow agora salva automaticamente o plano final consolidado em `final_output_of_the_workflow.txt`.
 
 ### 4.3 Conformidade com a Rubrica
-- **User Stories:** Seguem o padrão "As a [user], I want [action] so that [benefit]".
-- **Features:** Estruturadas com Nome, Descrição, Funcionalidade Chave e Benefício do Usuário.
-- **Tasks:** Incluem ID, Título, Referência à Story, Descrição, Critérios de Aceite, Esforço e Dependências.
+- **User Stories:** Seguem estritamente o padrão "As a [user], I want [action] so that [benefit]". Variantes como "I need" foram eliminadas através de prompts mais rígidos.
+- **Features:** Estruturadas obrigatoriamente com os 4 labels: Nome, Descrição, Funcionalidade Chave e Benefício do Usuário. Conteúdo genérico (ex: pagamentos) foi filtrado para focar apenas no Email Router.
+- **Tasks:** Seguem o layout estável de 7 labels (ID, Título, Referência à Story, Descrição, Critérios de Aceite, Esforço e Dependências), sem numerações redundantes ou formatos concorrentes.
+
+## 7) Correções de Feedback (Strict Rubric Compliance)
+
+Após revisão, foram aplicadas as seguintes melhorias críticas para garantir nota máxima na rubrica:
+
+1. **Refinamento de Personas e Conhecimento:**
+   - O **Product Manager** agora tem instruções proibindo explicitamente o uso de "I need" e exigindo "I want ... so that ...".
+   - O **Program Manager** foi instruído a rejeitar funcionalidades off-topic (como processamento de pagamentos) e focar em capacidades específicas do Email Router (NLP, RAG, Dashboard).
+   - O **Development Engineer** recebeu um layout fixo de 7 campos para evitar variações de nomenclatura (ex: "Task Identification" vs "Task ID").
+
+2. **Fortalecimento da Avaliação:**
+   - Os critérios de aceitação dos `EvaluationAgents` no `agentic_workflow.py` foram tornados programáticos e imperativos, forçando o refinamento imediato caso um label obrigatório esteja ausente ou o formato divirja.
+
+3. **Consolidação Inteligente do Plano Final:**
+   - A função `run_workflow` foi atualizada para agrupar logicamente os resultados por categoria, inserindo cabeçalhos de seção apenas uma vez. Isso transformou a saída de "logs concatenados" em um "entregável final polido".
 
 ---
 **Nota de Submissão:** Este projeto atende a todos os requisitos de implementação, teste e orquestração definidos na rubrica da Udacity.

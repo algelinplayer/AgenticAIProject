@@ -94,9 +94,10 @@ python -u .\agentic_workflow.py
 - Credential error? No
 - Unexpected stop/hang? No
 - Mitigation applied:
+    - Tightened `EvaluationAgent` criteria in `agentic_workflow.py` to strictly enforce rubric formats (As a/I want/so that, 4-label features, 7-label tasks).
     - Refined `base_agents.py` to prevent agents from including meta-talk/explanations in refined answers.
     - Improved `RoutingAgent` descriptions to ensure deterministic assignment of specialists.
-    - Modified `agentic_workflow.py` to accumulate and print all steps instead of just the last one.
+    - Modified `agentic_workflow.py` to accumulate, categorize, and group all results into a single final project plan with clear section headers.
 
 ### Incidents and mitigation (Previous long-run)
 - Timeout observed? yes (in a broader run with excessive step expansion)

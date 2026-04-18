@@ -51,12 +51,18 @@ knowledge_action_planning = (
 action_planning_agent = ActionPlanningAgent(openai_api_key, knowledge_action_planning)
 
 # Product Manager - Knowledge Augmented Prompt Agent
-persona_product_manager = "You are a Product Manager, you are responsible for defining the user stories for a product."
+persona_product_manager = (
+    "You are a Product Manager. Your ONLY goal is to generate user stories for the Email Router. "
+    "You MUST NOT include any introductory text, grouping headers, or conversational meta-talk. "
+    "Each story must be a single line following a strict template."
+)
 knowledge_product_manager = (
-    "Stories are defined by writing sentences with a persona, an action, and a desired outcome. "
-    "The sentences always start with: As a "
-    "Write several stories for the product spec below, where the personas are the different users of the product. "
-    # TODO: 5 - Complete this knowledge string by appending the product_spec loaded in TODO 3
+    "Every user story MUST follow this exact format: 'As a [type of user], I want [an action or feature] so that [benefit/value].' "
+    "persona: user of the system (e.g., Customer, Support Agent, SME, IT Admin). "
+    "action: specific functionality. "
+    "outcome: the value provided. "
+    "Strictly avoid 'I need' or other variations. "
+    "Do NOT include planning prose or grouping summaries."
     f"\n\nProduct Specification:\n{product_spec}"
 )
 # TODO: 6 - Instantiate a product_manager_knowledge_agent using 'persona_product_manager' and the completed 'knowledge_product_manager'
@@ -65,8 +71,13 @@ product_manager_knowledge_agent = KnowledgeAugmentedPromptAgent(openai_api_key, 
 # Product Manager - Evaluation Agent
 # TODO: 7 - Define the persona and evaluation criteria for a Product Manager evaluation agent and instantiate it as product_manager_evaluation_agent. This agent will evaluate the product_manager_knowledge_agent.
 # The evaluation_criteria should specify the expected structure for user stories (e.g., "As a [type of user], I want [an action or feature] so that [benefit/value].").
-persona_pm_eval = "You are an evaluation agent that checks the answers of other worker agents"
-criteria_pm_eval = "The answer should be stories that follow the following structure: As a [type of user], I want [an action or feature] so that [benefit/value]."
+persona_pm_eval = "You are a strict Auditor that ensures User Stories follow a precise syntax."
+criteria_pm_eval = (
+    "1. Every single line MUST match: 'As a [type of user], I want [an action or feature] so that [benefit/value].'\n"
+    "2. NO introductory text (e.g., 'Here are the stories...').\n"
+    "3. NO grouping headers or planning commentary.\n"
+    "4. 'I want' is mandatory; 'I need' is FORBIDDEN."
+)
 product_manager_evaluation_agent = EvaluationAgent(
     openai_api_key=openai_api_key,
     persona=persona_pm_eval,
@@ -76,22 +87,31 @@ product_manager_evaluation_agent = EvaluationAgent(
 )
 
 # Program Manager - Knowledge Augmented Prompt Agent
-persona_program_manager = "You are a Program Manager, you are responsible for defining the features for a product."
-knowledge_program_manager = "Features of a product are defined by organizing similar user stories into cohesive groups."
+persona_program_manager = (
+    "You are a Program Manager. Your ONLY goal is to define product features based on the Email Router specification. "
+    "You MUST NOT include grouping essay text, planning prose, or off-topic features (like payments)."
+)
+knowledge_program_manager = (
+    "Each feature MUST follow this exact 4-label structure:\n"
+    "Feature Name: [Title]\n"
+    "Description: [Brief explanation]\n"
+    "Key Functionality: [Specific capabilities]\n"
+    "User Benefit: [Value]\n\n"
+    "Focus ONLY on Email Router features: automated ingestion, NLP classification, RAG-based SME routing, analytics dashboard, etc. "
+    "Reject anything unrelated to Email Routing. Do NOT include 'Grouping similar stories' or other prose."
+)
 # Instantiate a program_manager_knowledge_agent using 'persona_program_manager' and 'knowledge_program_manager'
 # (This is a necessary step before TODO 8. Students should add the instantiation code here.)
 program_manager_knowledge_agent = KnowledgeAugmentedPromptAgent(openai_api_key, persona_program_manager, knowledge_program_manager)
 
 # Program Manager - Evaluation Agent
-persona_program_manager_eval = "You are an evaluation agent that checks the answers of other worker agents."
+persona_program_manager_eval = "You are a strict Auditor that ensures Product Features follow the required structure and scope."
 
 # TODO: 8 - Instantiate a program_manager_evaluation_agent using 'persona_program_manager_eval' and the evaluation criteria below.
 criteria_program_manager_eval = (
-    "The answer should be product features that follow the following structure: "
-    "Feature Name: A clear, concise title that identifies the capability\n"
-    "Description: A brief explanation of what the feature does and its purpose\n"
-    "Key Functionality: The specific capabilities or actions the feature provides\n"
-    "User Benefit: How this feature creates value for the user"
+    "1. Every feature MUST use exactly these four labels: 'Feature Name:', 'Description:', 'Key Functionality:', 'User Benefit:'.\n"
+    "2. Features MUST be relevant to the Email Router (No payment processing or unrelated generic features).\n"
+    "3. NO grouping essay text, commentary, or conversational artifacts."
 )
 program_manager_evaluation_agent = EvaluationAgent(
     openai_api_key=openai_api_key,
@@ -102,24 +122,34 @@ program_manager_evaluation_agent = EvaluationAgent(
 )
 
 # Development Engineer - Knowledge Augmented Prompt Agent
-persona_dev_engineer = "You are a Development Engineer, you are responsible for defining the development tasks for a product."
-knowledge_dev_engineer = "Development tasks are defined by identifying what needs to be built to implement each user story."
+persona_dev_engineer = (
+    "You are a Development Engineer. Your ONLY goal is to define technical tasks in a strict, stable layout. "
+    "You MUST NOT include meta-talk, multiple competing formats, or extra numbering."
+)
+knowledge_dev_engineer = (
+    "Each task MUST follow this exact 7-label structure on separate lines:\n"
+    "Task ID: [Unique ID]\n"
+    "Task Title: [Brief description]\n"
+    "Related User Story: [Parent story reference]\n"
+    "Description: [Technical details]\n"
+    "Acceptance Criteria: [Completion requirements]\n"
+    "Estimated Effort: [Estimation]\n"
+    "Dependencies: [Prerequisites]\n\n"
+    "Do NOT use 'Task Identification:' or other variations. Use 'Task ID:'. "
+    "Maintain a stable, repeatable layout for every task."
+)
 # Instantiate a development_engineer_knowledge_agent using 'persona_dev_engineer' and 'knowledge_dev_engineer'
 # (This is a necessary step before TODO 9. Students should add the instantiation code here.)
 development_engineer_knowledge_agent = KnowledgeAugmentedPromptAgent(openai_api_key, persona_dev_engineer, knowledge_dev_engineer)
 
 # Development Engineer - Evaluation Agent
-persona_dev_engineer_eval = "You are an evaluation agent that checks the answers of other worker agents."
+persona_dev_engineer_eval = "You are a strict Auditor that ensures Engineering Tasks follow the exact mandated structure."
 # TODO: 9 - Instantiate a development_engineer_evaluation_agent using 'persona_dev_engineer_eval' and the evaluation criteria below.
 criteria_dev_engineer_eval = (
-    "The answer should be tasks following this exact structure: "
-    "Task ID: A unique identifier for tracking purposes\n"
-    "Task Title: Brief description of the specific development work\n"
-    "Related User Story: Reference to the parent user story\n"
-    "Description: Detailed explanation of the technical work required\n"
-    "Acceptance Criteria: Specific requirements that must be met for completion\n"
-    "Estimated Effort: Time or complexity estimation\n"
-    "Dependencies: Any tasks that must be completed first"
+    "1. Every task MUST follow the exact seven-label layout: 'Task ID:', 'Task Title:', 'Related User Story:', 'Description:', 'Acceptance Criteria:', 'Estimated Effort:', 'Dependencies:'.\n"
+    "2. Labels must be on their own lines.\n"
+    "3. NO alternate numbering schemes or 'Task Identification' labels.\n"
+    "4. NO conversational text or meta-talk."
 )
 development_engineer_evaluation_agent = EvaluationAgent(
     openai_api_key=openai_api_key,
@@ -162,17 +192,17 @@ def development_engineer_support_function(query):
 routes = [
     {
         "name": "Product Manager",
-        "description": "Expert in defining user stories and personas. Use this agent ONLY for creating or refining user stories based on product specifications. Does NOT handle features or technical tasks.",
+        "description": "Expert in defining 'As a... I want... so that...' user stories. Use this agent ONLY for generating stories from a product spec. Does NOT handle features or engineering tasks.",
         "func": lambda x: product_manager_support_function(x)
     },
     {
         "name": "Program Manager",
-        "description": "Expert in defining product features and grouping stories. Use this agent ONLY for organizing user stories into feature sets. Does NOT define individual user stories or engineering tasks.",
+        "description": "Expert in defining product features with exact labels (Feature Name, Description, Key Functionality, User Benefit). Use this agent ONLY for features. Does NOT handle user stories or tasks.",
         "func": lambda x: program_manager_support_function(x)
     },
     {
         "name": "Development Engineer",
-        "description": "Expert in technical development tasks. Use this agent ONLY for defining detailed engineering tasks, IDs, and dependencies. Does NOT define stories or features.",
+        "description": "Expert in defining technical engineering tasks with 7 strict labels (Task ID, Task Title, Related User Story, etc.). Use this agent ONLY for tasks. Does NOT handle stories or features.",
         "func": lambda x: development_engineer_support_function(x)
     }
 ]
@@ -206,10 +236,41 @@ def run_workflow(workflow_prompt="Create a complete project plan for the Email R
     print("\n*** Final Workflow Output ***")
     if completed_steps:
         # Consolidate all deliverables into one final project plan
-        consolidated_output = "\n\n" + "="*50 + "\n"
+        user_stories = []
+        product_features = []
+        engineering_tasks = []
+        other_results = []
+        
+        for result in completed_steps:
+            if "As a" in result:
+                user_stories.append(result)
+            elif "Feature Name:" in result:
+                product_features.append(result)
+            elif "Task ID:" in result:
+                engineering_tasks.append(result)
+            else:
+                other_results.append(result)
+
+        consolidated_output = "\n" + "="*50 + "\n"
         consolidated_output += "FINAL PROJECT PLAN: EMAIL ROUTER\n"
         consolidated_output += "="*50 + "\n\n"
-        consolidated_output += "\n\n".join(completed_steps)
+        
+        if user_stories:
+            consolidated_output += "### 1. USER STORIES\n"
+            consolidated_output += "\n".join(user_stories) + "\n\n"
+            
+        if product_features:
+            consolidated_output += "### 2. PRODUCT FEATURES\n"
+            consolidated_output += "\n".join(product_features) + "\n\n"
+            
+        if engineering_tasks:
+            consolidated_output += "### 3. ENGINEERING TASKS\n"
+            consolidated_output += "\n".join(engineering_tasks) + "\n\n"
+            
+        if other_results:
+            consolidated_output += "### 4. OTHER DETAILS\n"
+            consolidated_output += "\n".join(other_results) + "\n\n"
+
         print(consolidated_output)
         
         # Save to file for evidence
@@ -217,6 +278,7 @@ def run_workflow(workflow_prompt="Create a complete project plan for the Email R
         output_file.parent.mkdir(parents=True, exist_ok=True)
         with open(output_file, "w", encoding="utf-8") as f:
             f.write(consolidated_output)
+        print(f"Final output saved to: {output_file}")
     else:
         print("No steps completed.")
 
