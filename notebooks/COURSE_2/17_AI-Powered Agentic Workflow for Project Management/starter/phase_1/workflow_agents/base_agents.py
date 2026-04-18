@@ -343,8 +343,9 @@ class EvaluationAgent:
             print(" Step 4: Send feedback to worker agent for refinement")
             refinement_prompt = (
                 f"The previous answer was: {response_from_worker}\n"
-                "It has been evaluated as incorrect.\n"
-                f"Make only these corrections, do not alter content validity: {instructions}"
+                f"It was evaluated as incorrect because: {evaluation}\n"
+                f"Please follow these instructions to fix it: {instructions}\n"
+                "Return ONLY the corrected answer itself, with no explanations, conversational text, or meta-talk."
             )
             response_from_worker = self.worker_agent.respond(refinement_prompt)
 

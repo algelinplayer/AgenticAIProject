@@ -162,17 +162,17 @@ def development_engineer_support_function(query):
 routes = [
     {
         "name": "Product Manager",
-        "description": "Responsible for defining product personas and user stories only. Does not define features or tasks. Does not group stories",
+        "description": "Expert in defining user stories and personas. Use this agent ONLY for creating or refining user stories based on product specifications. Does NOT handle features or technical tasks.",
         "func": lambda x: product_manager_support_function(x)
     },
     {
         "name": "Program Manager",
-        "description": "Responsible for defining product features by grouping related user stories. Does not define individual stories or engineering tasks.",
+        "description": "Expert in defining product features and grouping stories. Use this agent ONLY for organizing user stories into feature sets. Does NOT define individual user stories or engineering tasks.",
         "func": lambda x: program_manager_support_function(x)
     },
     {
         "name": "Development Engineer",
-        "description": "Responsible for defining technical development tasks, including Task ID, title, related story, description, acceptance criteria, effort, and dependencies.",
+        "description": "Expert in technical development tasks. Use this agent ONLY for defining detailed engineering tasks, IDs, and dependencies. Does NOT define stories or features.",
         "func": lambda x: development_engineer_support_function(x)
     }
 ]
@@ -181,7 +181,7 @@ routing_agent = RoutingAgent(openai_api_key, routes)
 routing_agent.agents = routes
 
 
-def run_workflow(workflow_prompt="What would the development tasks for this product be?"):
+def run_workflow(workflow_prompt="Create a complete project plan for the Email Router, including: 1) User Stories, 2) Product Features, and 3) Engineering Tasks."):
     print("\n*** Workflow execution started ***\n")
     print(f"Task to complete in this workflow, workflow prompt = {workflow_prompt}")
 
@@ -205,7 +205,18 @@ def run_workflow(workflow_prompt="What would the development tasks for this prod
 
     print("\n*** Final Workflow Output ***")
     if completed_steps:
-        print(completed_steps[-1])
+        # Consolidate all deliverables into one final project plan
+        consolidated_output = "\n\n" + "="*50 + "\n"
+        consolidated_output += "FINAL PROJECT PLAN: EMAIL ROUTER\n"
+        consolidated_output += "="*50 + "\n\n"
+        consolidated_output += "\n\n".join(completed_steps)
+        print(consolidated_output)
+        
+        # Save to file for evidence
+        output_file = Path("C:/Users/Colaborador/PycharmProjects/AgenticAIProject/notebooks/COURSE_2/17_AI-Powered Agentic Workflow for Project Management/starter/tests/EVIDENCES/final_output_of_the_workflow.txt")
+        output_file.parent.mkdir(parents=True, exist_ok=True)
+        with open(output_file, "w", encoding="utf-8") as f:
+            f.write(consolidated_output)
     else:
         print("No steps completed.")
 

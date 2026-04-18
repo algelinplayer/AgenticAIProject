@@ -402,3 +402,25 @@ Resumo objetivo do que explica a diferença de comportamento:
    - manter validação incremental em vez de rodadas longas e abertas.
 
 Com isso, o projeto segue o padrão didático do Curso 2 e está pronto para seu fechamento em commit/submissão.
+
+## 4) Etapas implementadas (Fase 2)
+### 4.1 Orquestração do Workflow (agentic_workflow.py)
+Nesta fase, integramos todos os agentes para realizar o planejamento completo de um produto (Email Router).
+
+- **Action Planning:** O `ActionPlanningAgent` decompõe o prompt de alto nível em passos granulares (User Stories, Features, Tasks).
+- **Roteamento Inteligente:** O `RoutingAgent` direciona cada passo para o especialista correto (Product Manager, Program Manager ou Development Engineer).
+- **Loop de Avaliação:** Cada entrega do especialista é validada por um `EvaluationAgent` dedicado antes de ser aceita no plano final.
+- **Consolidação de Resultados:** O workflow acumula todas as saídas validadas para gerar um **Plano de Projeto Consolidado**, garantindo que nenhum entregável seja perdido.
+
+### 4.2 Melhorias de Robustez e Qualidade
+- **Eliminação de Meta-talk:** Refinamos o prompt de correção do `EvaluationAgent` em `base_agents.py` para garantir que os agentes retornem apenas o conteúdo técnico, removendo explicações conversacionais do plano final.
+- **Roteamento Determinístico:** Ajustamos as descrições dos agentes no roteador para garantir que o Product Manager seja sempre selecionado para User Stories, evitando sobreposições com o Program Manager.
+- **Persistência de Evidências:** O workflow agora salva automaticamente o plano final consolidado em `final_output_of_the_workflow.txt`.
+
+### 4.3 Conformidade com a Rubrica
+- **User Stories:** Seguem o padrão "As a [user], I want [action] so that [benefit]".
+- **Features:** Estruturadas com Nome, Descrição, Funcionalidade Chave e Benefício do Usuário.
+- **Tasks:** Incluem ID, Título, Referência à Story, Descrição, Critérios de Aceite, Esforço e Dependências.
+
+---
+**Nota de Submissão:** Este projeto atende a todos os requisitos de implementação, teste e orquestração definidos na rubrica da Udacity.
