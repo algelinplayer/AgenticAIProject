@@ -15,4 +15,6 @@ A `requirements.txt` file has been provided in this repo if you want to work on 
 You will find instructions for each of the two phases of the project in the README file inside the folder for that phase.
 
 ## License
-[License](../LICENSE.md)
+[License](./LICENSE)
+
+Este projeto foi desenvolvido como parte de uma especialização nanodegree da Udacity. O código starter original é de propriedade da Udacity, e as implementações e modificações subsequentes são licenciadas sob a licença MIT deste repositório.
