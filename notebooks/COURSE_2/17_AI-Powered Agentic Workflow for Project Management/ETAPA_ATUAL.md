@@ -44,13 +44,13 @@ Implementação dos agentes conforme as instruções do **Phase 1 README** e a r
 ### 3.2 Scripts de teste da Fase 1
 Foram mantidos/ajustados os scripts de teste individuais de cada agente, seguindo o padrão do **Phase 1 README**:
 
-- direct_prompt_agent.py  
-- augmented_prompt_agent.py  
-- knowledge_augmented_prompt_agent.py  
-- rag_knowledge_prompt_agent.py  
-- evaluation_agent.py  
-- routing_agent.py  
-- action_planning_agent.py  
+- direct_prompt_agent_standalone_test.py  
+- augmented_prompt_agent_standalone_test.py  
+- knowledge_augmented_prompt_agent_standalone_test.py  
+- rag_knowledge_prompt_agent_standalone_test.py  
+- evaluation_agent_standalone_test.py  
+- routing_agent_standalone_test.py  
+- action_planning_agent_standalone_test.py  
 
 **Motivação:** validar o comportamento de cada agente isoladamente antes de compor o workflow da Fase 2.
 
@@ -105,7 +105,22 @@ O **RAGKnowledgePromptAgent** permite que a IA responda com base em documentos e
     ```
     O sistema aplica a similaridade em todos os chunks e seleciona o maior valor (`idxmax`).
 
-### 3.7 Sobre a Estabilidade do Terminal (Prevenção de Travamentos)
+### 3.7 Diferenças entre as Classes RAG e Conhecimento
+O projeto utiliza duas classes principais para lidar com conhecimento externo, cada uma com um propósito específico:
+
+1.  **`KnowledgeAugmentedPromptAgent` (RAG Estático/Total):**
+    - **Como funciona:** O conhecimento completo é passado diretamente no "System Prompt" do agente.
+    - **Vantagem:** O LLM tem visibilidade de todo o documento, o que permite responder perguntas que dependem da relação entre diferentes partes do texto.
+    - **Limitação:** Restrito ao tamanho da janela de contexto do modelo (ex: ~16k tokens no gpt-3.5-turbo). Se o documento for grande, o modelo corta o texto ou falha.
+    - **Uso no Projeto:** Ideal para o `Product Manager` que trabalha com uma especificação de produto (geralmente curta e focada).
+
+2.  **`RAGKnowledgePromptAgent` (RAG Dinâmico/Retrieval - Fornecida):**
+    - **Como funciona:** Utiliza um sistema de recuperação (Embeddings + Similaridade de Cosseno). Ela "fatia" (chunking) um documento gigante em pedaços e, na hora de responder, recupera apenas o pedaço mais parecido com a pergunta do usuário.
+    - **Vantagem:** Escalabilidade. Pode trabalhar com manuais de milhares de páginas ou bases de conhecimento massivas.
+    - **Limitação:** Perda de contexto global. Se a resposta exigir conectar informações de dois chunks distantes, o agente pode falhar se recuperar apenas um deles.
+    - **Papel da Classe Fornecida (Provided):** Esta classe foi fornecida pronta pois implementa a complexidade de algoritmos de fatiamento de texto e cálculo vetorial, que são a base de infraestrutura para sistemas de IA modernos. Ela serve como o "motor de busca inteligente" que os outros agentes podem consultar quando precisam de informações de uma base de dados extensa.
+
+### 3.8 Sobre a Estabilidade do Terminal (Prevenção de Travamentos)
 Identificamos que a thread da Junie/Terminal pode "congelar" durante a execução de scripts de IA. Isso ocorre por limitações físicas do ambiente de execução e bugs lógicos herdados:
 
 1. **I/O Bloqueante:** Chamadas de API síncronas e leitura/escrita de arquivos CSV grandes podem travar o processo enquanto aguardam resposta.

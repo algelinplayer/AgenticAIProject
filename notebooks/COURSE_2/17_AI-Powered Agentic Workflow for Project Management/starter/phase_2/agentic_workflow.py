@@ -1,14 +1,21 @@
 # agentic_workflow.py
 
+import os
+import sys
+from pathlib import Path
+
+# Add phase_1 directory to sys.path to access its workflow_agents package
+phase_2_dir = Path(__file__).resolve().parent
+phase_1_dir = phase_2_dir.parent / "phase_1"
+if str(phase_1_dir) not in sys.path:
+    sys.path.append(str(phase_1_dir))
+
 # TODO: 1 - Import the following agents: ActionPlanningAgent, KnowledgeAugmentedPromptAgent, EvaluationAgent, RoutingAgent from the workflow_agents.base_agents module
 from workflow_agents.base_agents import ActionPlanningAgent, KnowledgeAugmentedPromptAgent, EvaluationAgent, RoutingAgent
-import os
-from pathlib import Path
 from dotenv import load_dotenv
 
 # TODO: 2 - Load the OpenAI key into a variable called openai_api_key
 project_root = Path(__file__).resolve().parents[2]
-phase_2_dir = Path(__file__).resolve().parent
 load_dotenv(project_root / ".env")
 openai_api_key = os.getenv("OPENAI_API_KEY_DEV") or os.getenv("OPENAI_API_KEY")
 

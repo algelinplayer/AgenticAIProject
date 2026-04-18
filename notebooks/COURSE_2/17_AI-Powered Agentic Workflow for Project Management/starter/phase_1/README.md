@@ -23,13 +23,13 @@ phase_1/
 ├── workflow_agents/
 │   ├── __init__.py             ← (empty)
 │   └── base_agents.py          ← Student implementation file
-├── direct_prompt_agent.py
-├── augmented_prompt_agent.py
-├── knowledge_augmented_prompt_agent.py
-├── rag_knowledge_prompt_agent.py
-├── evaluation_agent.py
-├── routing_agent.py
-└── action_planning_agent.py
+├── direct_prompt_agent_standalone_test.py
+├── augmented_prompt_agent_standalone_test.py
+├── knowledge_augmented_prompt_agent_standalone_test.py
+├── rag_knowledge_prompt_agent_standalone_test.py
+├── evaluation_agent_standalone_test.py
+├── routing_agent_standalone_test.py
+└── action_planning_agent_standalone_test.py
 ```
 
 * `workflow_agents` is a Python package containing all your agent class definitions.
@@ -69,7 +69,7 @@ Complete the following tasks to implement your `DirectPromptAgent` class:
 
 #### Test the `DirectPromptAgent` Class
 
-**File:** `direct_prompt_agent_test.py`
+**File:** `direct_prompt_agent_standalone_test.py`
 
 Complete these steps in your test script to verify the functionality of the `DirectPromptAgent`:
 
@@ -105,7 +105,7 @@ Complete the following steps to implement your `AugmentedPromptAgent` class:
 
 #### Test the `AugmentedPromptAgent` Class
 
-**File:** `augmented_prompt_agent_test.py`
+**File:** `augmented_prompt_agent_standalone_test.py`
 
 Complete the following tasks in your test script to test the `AugmentedPromptAgent`:
 
@@ -154,7 +154,7 @@ Complete the following steps to build this agent class:
 
 #### Test the `KnowledgeAugmentedPromptAgent` Class
 
-**File:** `knowledge_augmented_prompt_agent.py`
+**File:** `knowledge_augmented_prompt_agent_standalone_test.py`
 
 Complete the following steps in your test script to instantiate and test the `KnowledgeAugmentedPromptAgent`:
 
@@ -207,7 +207,7 @@ Complete the following tasks to implement the `EvaluationAgent` class:
 
 #### Test the `EvaluationAgent` Class
 
-**File:** `evaluation_agent.py`
+**File:** `evaluation_agent_standalone_test.py`
 
 Complete the following steps in your test script to instantiate and test the `EvaluationAgent`:
 
@@ -252,7 +252,7 @@ Complete the following tasks to implement the `RoutingAgent` class:
 
 #### Test the `RoutingAgent` Class
 
-**File:** `routing_agent.py`
+**File:** `routing_agent_standalone_test.py`
 
 Complete the following steps in your test script to instantiate and test the `RoutingAgent`:
 
@@ -294,7 +294,7 @@ Complete the following tasks to implement the `ActionPlanningAgent` class:
 
 #### Test the `ActionPlanningAgent` Class
 
-**File:** `action_planning_agent_test.py` (assuming this naming convention)
+**File:** `action_planning_agent_standalone_test.py`
 
 Complete the following steps in your test script to test the `ActionPlanningAgent`:
 

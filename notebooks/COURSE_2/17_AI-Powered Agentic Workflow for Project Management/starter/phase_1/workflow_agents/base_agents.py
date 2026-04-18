@@ -18,7 +18,7 @@ class DirectPromptAgent:
 
     def respond(self, prompt):
         # Generate a response using the OpenAI API
-        client = OpenAI(base_url=OPENAI_BASE_URL, api_key=self.openai_api_key)
+        client = OpenAI(base_url=OPENAI_BASE_URL, api_key=self.openai_api_key, timeout=60.0)
         response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[
@@ -37,7 +37,7 @@ class AugmentedPromptAgent:
 
     def respond(self, input_text):
         """Generate a response using OpenAI API."""
-        client = OpenAI(base_url=OPENAI_BASE_URL, api_key=self.openai_api_key)
+        client = OpenAI(base_url=OPENAI_BASE_URL, api_key=self.openai_api_key, timeout=60.0)
 
         response = client.chat.completions.create(
             model="gpt-3.5-turbo",
@@ -63,7 +63,7 @@ class KnowledgeAugmentedPromptAgent:
 
     def respond(self, input_text):
         """Generate a response using the OpenAI API."""
-        client = OpenAI(base_url=OPENAI_BASE_URL, api_key=self.openai_api_key)
+        client = OpenAI(base_url=OPENAI_BASE_URL, api_key=self.openai_api_key, timeout=60.0)
         response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[
@@ -290,11 +290,10 @@ class EvaluationAgent:
         self.worker_agent = worker_agent
         self.max_interactions = max_interactions
 
-    def evaluate(self, initial_prompt):
-        # This method manages interactions between agents to achieve a solution.
-        client = OpenAI(base_url=OPENAI_BASE_URL, api_key=self.openai_api_key)
-        prompt_to_evaluate = initial_prompt
-        response_from_worker = ""
+    def evaluate(self, worker_response):
+        # This method evaluates a worker response and iteratively requests corrections when needed.
+        client = OpenAI(base_url=OPENAI_BASE_URL, api_key=self.openai_api_key, timeout=60.0)
+        response_from_worker = worker_response
         evaluation = ""
         iterations = 0
 
@@ -302,12 +301,9 @@ class EvaluationAgent:
             iterations = i + 1
             print(f"\n--- Interaction {i+1} ---")
 
-            print(" Step 1: Worker agent generates a response to the prompt")
-            print(f"Prompt:\n{prompt_to_evaluate}")
-            response_from_worker = self.worker_agent.respond(prompt_to_evaluate)
+            print(" Step 1: Evaluator agent judges the response")
             print(f"Worker Agent Response:\n{response_from_worker}")
 
-            print(" Step 2: Evaluator agent judges the response")
             eval_prompt = (
                 f"Does the following answer: {response_from_worker}\n"
                 f"Meet this criteria: {self.evaluation_criteria}\n"
@@ -324,33 +320,34 @@ class EvaluationAgent:
             evaluation = response.choices[0].message.content.strip()
             print(f"Evaluator Agent Evaluation:\n{evaluation}")
 
-            print(" Step 3: Check if evaluation is positive")
+            print(" Step 2: Check if evaluation is positive")
             if evaluation.lower().startswith("yes"):
                 print("✅ Final solution accepted.")
                 break
-            else:
-                print(" Step 4: Generate instructions to correct the response")
-                instruction_prompt = (
-                    f"Provide instructions to fix an answer based on these reasons why it is incorrect: {evaluation}"
-                )
-                response = client.chat.completions.create(
-                    model="gpt-3.5-turbo",
-                    messages=[
-                        {"role": "system", "content": self.persona},
-                        {"role": "user", "content": instruction_prompt}
-                    ],
-                    temperature=0
-                )
-                instructions = response.choices[0].message.content.strip()
-                print(f"Instructions to fix:\n{instructions}")
 
-                print(" Step 5: Send feedback to worker agent for refinement")
-                prompt_to_evaluate = (
-                    f"The original prompt was: {initial_prompt}\n"
-                    f"The response to that prompt was: {response_from_worker}\n"
-                    "It has been evaluated as incorrect.\n"
-                    f"Make only these corrections, do not alter content validity: {instructions}"
-                )
+            print(" Step 3: Generate instructions to correct the response")
+            instruction_prompt = (
+                f"Provide instructions to fix an answer based on these reasons why it is incorrect: {evaluation}"
+            )
+            response = client.chat.completions.create(
+                model="gpt-3.5-turbo",
+                messages=[
+                    {"role": "system", "content": self.persona},
+                    {"role": "user", "content": instruction_prompt}
+                ],
+                temperature=0
+            )
+            instructions = response.choices[0].message.content.strip()
+            print(f"Instructions to fix:\n{instructions}")
+
+            print(" Step 4: Send feedback to worker agent for refinement")
+            refinement_prompt = (
+                f"The previous answer was: {response_from_worker}\n"
+                "It has been evaluated as incorrect.\n"
+                f"Make only these corrections, do not alter content validity: {instructions}"
+            )
+            response_from_worker = self.worker_agent.respond(refinement_prompt)
+
         return {
             "final_response": response_from_worker,
             "evaluation": evaluation,
@@ -364,7 +361,7 @@ class RoutingAgent:
         self.agents = agents
 
     def get_embedding(self, text):
-        client = OpenAI(base_url=OPENAI_BASE_URL, api_key=self.openai_api_key)
+        client = OpenAI(base_url=OPENAI_BASE_URL, api_key=self.openai_api_key, timeout=60.0)
         response = client.embeddings.create(
             model="text-embedding-3-large",
             input=text
@@ -401,7 +398,7 @@ class ActionPlanningAgent:
         self.knowledge = knowledge
 
     def extract_steps_from_prompt(self, prompt):
-        client = OpenAI(base_url=OPENAI_BASE_URL, api_key=self.openai_api_key)
+        client = OpenAI(base_url=OPENAI_BASE_URL, api_key=self.openai_api_key, timeout=60.0)
         response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[

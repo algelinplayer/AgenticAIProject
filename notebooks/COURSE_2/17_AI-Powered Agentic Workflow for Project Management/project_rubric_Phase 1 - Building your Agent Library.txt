@@ -15,13 +15,13 @@ phase_1/
 ├── workflow_agents/
 │   ├── __init__.py             ← (empty)
 │   └── base_agents.py          ← Student implementation file
-├── direct_prompt_agent.py
-├── augmented_prompt_agent.py
-├── knowledge_augmented_prompt_agent.py
-├── rag_knowledge_prompt_agent.py
-├── evaluation_agent.py
-├── routing_agent.py
-└── action_planning_agent.py
+├── direct_prompt_agent_standalone_test.py
+├── augmented_prompt_agent_standalone_test.py
+├── knowledge_augmented_prompt_agent_standalone_test.py
+├── rag_knowledge_prompt_agent_standalone_test.py
+├── evaluation_agent_standalone_test.py
+├── routing_agent_standalone_test.py
+└── action_planning_agent_standalone_test.py
 workflow_agents is a Python package containing all your agent class definitions.
 One script per agent to test their functionality has also been provided in the folder.
 Environment Configuration: Create a .env file in the tests/ folder containing your OpenAI API key:
@@ -109,7 +109,7 @@ Use only the following knowledge to answer, do not use your own knowledge: *know
 Answer the prompt based on this knowledge, not your own.
 Append User Prompt: Append the user's input prompt as a separate message in the API request.
 Test the KnowledgeAugmentedPromptAgent Class
-File: knowledge_augmented_prompt_agent.py
+File: knowledge_augmented_prompt_agent_standalone_test.py
 
 Complete the following steps in your test script to instantiate and test the KnowledgeAugmentedPromptAgent:
 
@@ -145,7 +145,7 @@ Define Evaluation Message Structure: Define the message structure to evaluate re
 Define Correction Instruction Message Structure: Define the message structure to generate instructions for correcting responses, also using the OpenAI API with temperature=0.
 Return Results: Ensure the respond method (or equivalent) returns a dictionary containing the final response from the worker agent, the evaluation result, and the count of iterations performed.
 Test the EvaluationAgent Class
-File: evaluation_agent.py
+File: evaluation_agent_standalone_test.py
 
 Complete the following steps in your test script to instantiate and test the EvaluationAgent:
 
@@ -181,7 +181,7 @@ Select the agent that has the highest similarity score.
 Return Selected Agent's Response: The routing method should return the response obtained by calling the selected agent.
 
 Test the RoutingAgent Class
-File: routing_agent.py
+File: routing_agent_standalone_test.py
 
 Complete the following steps in your test script to instantiate and test the RoutingAgent:
 

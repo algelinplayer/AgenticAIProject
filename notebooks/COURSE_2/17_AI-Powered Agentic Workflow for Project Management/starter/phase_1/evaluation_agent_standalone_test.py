@@ -24,5 +24,6 @@ evaluation_agent = EvaluationAgent(
     max_interactions=10
 )
 
-evaluation_result = evaluation_agent.evaluate(prompt)
+initial_response = knowledge_agent.respond(prompt)
+evaluation_result = evaluation_agent.evaluate(initial_response)
 print(evaluation_result)
