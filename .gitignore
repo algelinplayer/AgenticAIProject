@@ -10,3 +10,5 @@ notebooks/COURSE_1_Prompting for LLM Reasoning and Planning/3_applying-cot-and-r
 *.zip
 
 notebooks/applying-cot-and-react-prompting/__pycache__/
+
+*.csv
