@@ -38,7 +38,7 @@ phase_1/
 **Environment Configuration:** Create a `.env` file in the `tests/` folder containing your OpenAI API key:
 
 ```
-OPENAI_API_KEY=your_openai_api_key
+OPENAI_API_KEY_DEV=your_openai_api_key
 ```
 
 ---

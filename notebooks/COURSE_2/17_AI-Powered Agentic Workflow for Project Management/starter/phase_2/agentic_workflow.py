@@ -15,8 +15,8 @@ from workflow_agents.base_agents import ActionPlanningAgent, KnowledgeAugmentedP
 from dotenv import load_dotenv
 
 # TODO: 2 - Load the OpenAI key into a variable called openai_api_key
-project_root = Path(__file__).resolve().parents[2]
-load_dotenv(project_root / ".env")
+env_path = phase_2_dir.parent / "tests" / ".env"
+load_dotenv(env_path)
 openai_api_key = os.getenv("OPENAI_API_KEY_DEV") or os.getenv("OPENAI_API_KEY")
 
 if not openai_api_key:

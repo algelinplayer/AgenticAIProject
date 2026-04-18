@@ -5,7 +5,9 @@ import os
 from dotenv import load_dotenv
 
 # Load environment variables from .env file
-load_dotenv()
+from pathlib import Path
+env_path = Path(__file__).resolve().parents[1] / "tests" / ".env"
+load_dotenv(env_path)
 
 # Load the OpenAI API key from the environment variables
 openai_api_key = os.getenv("OPENAI_API_KEY_DEV") or os.getenv("OPENAI_API_KEY")
